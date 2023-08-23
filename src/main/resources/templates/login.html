@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+    xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Sign In</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="https://myria.math.aegean.gr/~atsol/newpage/software/aegeanlogo/svg/sfiga-bold.svg">
+    <script type="text/javascript" src="/webjars/bootstrap/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <div class="bg">
+        <div class="sliderfromright">
+            <p class="header1">ΣΥΣΤΗΜΑ ΕΝΗΜΕΡΩΣΗΣ ΦΟΙΤΗΤΩΝ</p>
+            <p class="header2">Τμήμα Μηχανικών Πληροφοριακών και Επικοινωνιακών Συστημάτων </p>
+        </div>
+
+        <div id="fade1" class="fadeinform hidden">
+            <form method="POST" th:action="@{/doLogin}" class="formform">
+                <label for="username">Όνομα Χρήστη:</label><br>
+                <input type="text" id="username" name="username" class="inputfield"><br><br>
+                <label for="password">Κωδικός Πρόσβασης:</label><br>
+                <input type="password" name="password" id="password" class="inputfield"><br><br>
+                <input type="submit" value="Είσοδος" style="font-weight: bold;" class="buttons"><br><br>
+            </form>
+            <br>
+            <button type="button" class="formform buttons" onclick="window.location.href='index.html'">Είσοδος
+                επισκέπτη</button>
+            <button id="signup" type="button" class="formform buttons">Εγγραφή χρήστη</button>
+        </div>
+
+        <div id="fade2" class="fadeinform hidden" style="overflow-y: scroll;">
+            <form th:action="@{/process_register}" th:object="${user}" method="POST" class="formform">
+                <label for="username">Όνομα Χρήστη:</label><br>
+                <input th:field="*{username}" type="text" id="username" name="username" class="inputfield" oninput="this.setCustomValidity('')"
+                oninvalid="this.setCustomValidity('Αυτό το πεδίο είναι υποχρεωτικό.')" required><br><br>
+                <label for="firstname">Όνομα:</label><br>
+                <input type="text" id="firstname" th:name="fname" class="inputfield" oninput="this.setCustomValidity('')"
+                oninvalid="this.setCustomValidity('Αυτό το πεδίο είναι υποχρεωτικό.')" required><br><br>
+                <label for="lastname">Επίθετο:</label><br>
+                <input type="text" id="lastname" th:name="lname" class="inputfield" oninput="this.setCustomValidity('')"
+                oninvalid="this.setCustomValidity('Αυτό το πεδίο είναι υποχρεωτικό.')" required><br><br>
+                <label for="password">Κωδικός Πρόσβασης:</label><br>
+                <input th:field="*{password}" type="password" name="password" id="password" class="inputfield" oninput="this.setCustomValidity('')"
+                oninvalid="this.setCustomValidity('Αυτό το πεδίο είναι υποχρεωτικό.')" required><br>
+                <p>Ρόλος:</p>
+                <select th:field="*{role}" class="select" id="role">
+                    <option th:each="role: ${roles}" th:if="${role.id}!= 1" th:value="${role.id}"
+                        th:text="${role.title}"></option>
+                </select>
+                <br><br id="twobr">
+                <select th:name="pos" id="twoselect" class="select" style="display: none;" required>
+                    <option value="Επίκουρος">Επίκουρος</option>
+                    <option value="Αναπληρωτής">Αναπληρωτής</option>
+                    <option value="Καθηγητής">Καθηγητής</option>
+                </select><br id="twobr">
+                <label for="am" id="onelabel" class="hidden">ΑΜ:</label><br id="onebr">
+                <input type="number" id="onefield" class="inputfield hidden" th:name="am"
+                    oninput="this.setCustomValidity('')"
+                    oninvalid="this.setCustomValidity('Αυτό το πεδίο είναι υποχρεωτικό.')" required><br id="onebr"><br
+                    id="onebr">
+                <label for="admyear" id="onelabel2" class="hidden">Έτος Εισαγωγής:</label><br id="onebr">
+                <input type="number" id="onefield2" class="inputfield hidden" th:name="admyear"
+                    oninput="this.setCustomValidity('')"
+                    oninvalid="this.setCustomValidity('Αυτό το πεδίο είναι υποχρεωτικό.')" required><br id="onebr"><br
+                    id="onebr">
+                <input type="submit" value="Εγγραφή" style="font-weight: bold;" class="buttons">
+                <button id="back" type="button" class="formform buttons">Πίσω</button>
+            </form>
+        </div>
+
+
+
+        <footer class="foot">
+            <div class="sliderfromleft">
+                <p class="exit">X</p>
+                <img src="icsd_logo.png">
+            </div>
+        </footer>
+
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $(".sliderfromright").stop().animate({ right: 0 }, 10);
+            $(".sliderfromleft").stop().animate({ left: 0 }, 10);
+            $("#fade1").fadeIn(1000).removeClass("hidden");
+            $(".exit").click(function () { $(".foot").fadeOut(500) });
+            $("#signup").click(function () { $("#fade1").fadeOut(50).ready(function () { $("#fade2").fadeIn(500) }) });
+            $("#back").click(function () { $("#fade2").fadeOut(25).ready(function () { $("#fade1").fadeIn(500) }) });
+            $("#role").change(function () {
+                if ($(this).val() == "2") {
+                    $('#twoselect').show();
+                    $('#twobr').show();
+                } else {
+                    $('#twoselect').hide();
+                    $('#twobr').hide();
+                }
+                if ($(this).val() == "3") {
+                    $("#onefield, #onefield2, #onelabel, #onelabel2").prop("disabled", false);
+                    $('#onefield, #onefield2').show();
+                    $('#onelabel').show();
+                    $('#onelabel2').show();
+                    $('#onebr').show();
+                } else {
+                    $("#onefield, #onefield2, #onelabel, #onelabel2").prop("disabled", true);
+                    $('#onefield').hide();
+                    $('#onefield2').hide();
+                    $('#onelabel').hide();
+                    $('#onelabel2').hide();
+                    $('#onebr').hide();
+                }
+            });
+            $("#role").trigger("change");
+        });
+    </script>
+</body>
+
+
+</html>
